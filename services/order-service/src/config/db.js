@@ -16,3 +16,4 @@ const pool = new Pool({
 })
 
 module.exports = pool
+// → "je partage mon pool de connexion"
