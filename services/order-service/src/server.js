@@ -25,6 +25,9 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && match) {
       return controller.getOrderById(req, res, Number(match[1]))
     }
+    if (req.method === 'POST' && url.pathname === '/v1/orders') {
+      return controller.createOrder(req, res)
+}
 
     // Route pas trouvée
     sendJson(res, 404, { error: 'Route introuvable' })

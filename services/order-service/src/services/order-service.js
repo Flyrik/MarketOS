@@ -12,3 +12,5 @@ async function getById(id) {
 async function create(customerId, status, totalCents) {
     return repo.createOrder(customerId, status, totalCents)
 }
+
+module.exports = { getAll, getById, create }

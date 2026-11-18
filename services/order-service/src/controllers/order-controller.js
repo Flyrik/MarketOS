@@ -12,4 +12,10 @@ async function getOrderById(req, res, id) {
   res.end(JSON.stringify({ data: order }))
 }
 
-module.exports = { getAllOrders, getOrderById }
+async function createOrder(req, res) {
+  const createorder = await service.create(customerId, status, totalCents)
+  res.writeHead(201, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify({ data: createorder }))
+}
+
+module.exports = { getAllOrders, getOrderById, createOrder }

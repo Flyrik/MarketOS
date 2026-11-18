@@ -1,6 +1,5 @@
 //Crée la connexion à la base de données
 
-import pg from 'pg'
 
 const pg = require('pg') 
 
