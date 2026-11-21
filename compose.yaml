@@ -168,6 +168,24 @@ services: #nos services (conteneurs) à lancer
       timeout: 3s
       retries: 5
 
+  orders:
+    build:
+      context: ./services/order-service
+    container_name: market-orders
+    restart: unless-stopped
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: market
+      DB_USER: orders_svc
+      DB_PASSWORD: ${ORDERS_DB_PASSWORD:?Define ORDERS_DB_PASSWORD in .env}
+      PORT: 4002
+    ports:
+      - "127.0.0.1:4002:4002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres_data:
   mongo_data:

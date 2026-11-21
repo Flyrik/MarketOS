@@ -13,9 +13,19 @@ async function getOrderById(req, res, id) {
 }
 
 async function createOrder(req, res) {
-  const createorder = await service.create(customerId, status, totalCents)
+  // 1. Lire le body (en Node natif, ça arrive en morceaux)
+  let body = ''
+  for await (const chunk of req) {
+    body += chunk
+  }
+  const data = JSON.parse(body)
+
+  // 2. Appeler le service
+  const order = await service.create(data.customer_id, data.status, data.total_cents)
+
+  // 3. Renvoyer avec statut 201 (created)
   res.writeHead(201, { 'Content-Type': 'application/json' })
-  res.end(JSON.stringify({ data: createorder }))
+  res.end(JSON.stringify({ data: order }))
 }
 
 module.exports = { getAllOrders, getOrderById, createOrder }
