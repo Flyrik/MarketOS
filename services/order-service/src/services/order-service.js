@@ -13,4 +13,8 @@ async function create(customerId, status, totalCents) {
     return repo.createOrder(customerId, status, totalCents)
 }
 
-module.exports = { getAll, getById, create }
+async function updateStatus(id, status ) {
+    return repo.updateOrderStatus(id, status)
+}
+
+module.exports = { getAll, getById, create, updateStatus }

@@ -26,6 +26,16 @@ async function createOrder(req, res) {
   // 3. Renvoyer avec statut 201 (created)
   res.writeHead(201, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify({ data: order }))
+
 }
 
-module.exports = { getAllOrders, getOrderById, createOrder }
+async function updateOrder(req, res, id) {
+  let body = ''
+  for await (const chunk of req) { body += chunk }
+  const data = JSON.parse(body)
+  const order = await service.updateStatus(id, data.status)
+  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify({ data: order }))
+}
+
+module.exports = { getAllOrders, getOrderById, createOrder , updateOrder }

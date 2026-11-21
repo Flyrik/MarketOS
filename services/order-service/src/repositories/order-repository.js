@@ -18,8 +18,14 @@ async function createOrder(customerId, status, totalCents) {
   return result.rows[0]
 }
 
+async function updateOrderStatus(id, status) {
+  const result = await pool.query(
+    'UPDATE orders.orders SET status = $1 WHERE id = $2 RETURNING *',
+    [status, id]
+  )
+  return result.rows[0]
+}
 
 
 
-
-module.exports = { getAllOrders, getOrderById, createOrder }
+module.exports = { getAllOrders, getOrderById, createOrder, updateOrderStatus }
