@@ -27,7 +27,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === 'POST' && url.pathname === '/v1/orders') {
       return controller.createOrder(req, res)
-}
+    }
     if (req.method === 'PUT' && match) {
       return controller.updateOrder(req, res, Number(match[1]))
     }
