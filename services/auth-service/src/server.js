@@ -15,12 +15,12 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost')
     try {
   if (req.method === 'POST' && url.pathname === '/v1/auth/login') {
-    return controller.login(req, res)
+    return await controller.login(req, res)
     
   }
   if (req.method === 'POST' && url.pathname === '/v1/auth/register') {
 
-    return controller.register(req, res)
+    return await controller.register(req, res)
   }
     } catch (err) {
     console.error(err)

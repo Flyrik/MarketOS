@@ -17,19 +17,19 @@ const server = http.createServer(async (req, res) => {
   try {
     // GET /v1/orders → toutes les commandes
     if (req.method === 'GET' && url.pathname === '/v1/orders') {
-      return controller.getAllOrders(req, res)
+      return await controller.getAllOrders(req, res)
     }
 
     // GET /v1/orders/3 → commande par id
     const match = url.pathname.match(/^\/v1\/orders\/(\d+)$/)
     if (req.method === 'GET' && match) {
-      return controller.getOrderById(req, res, Number(match[1]))
+      return await controller.getOrderById(req, res, Number(match[1]))
     }
     if (req.method === 'POST' && url.pathname === '/v1/orders') {
-      return controller.createOrder(req, res)
+      return await controller.createOrder(req, res)
     }
     if (req.method === 'PUT' && match) {
-      return controller.updateOrder(req, res, Number(match[1]))
+      return await controller.updateOrder(req, res, Number(match[1]))
     }
 
     // Route pas trouvée
