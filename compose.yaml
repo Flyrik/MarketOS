@@ -170,7 +170,7 @@ services: #nos services (conteneurs) à lancer
 
   orders:
     build:
-      context: ./services/order-service
+      context: ./services/order-service  #On va chercher le Dockerfile dans le dossier ./services/order-service
     container_name: market-orders
     restart: unless-stopped
     environment:
@@ -186,6 +186,24 @@ services: #nos services (conteneurs) à lancer
       postgres:
         condition: service_healthy
 
+  auth:
+    build:
+      context: ./services/auth-service
+    container_name: market-auth
+    restart: unless-stopped
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: market
+      DB_USER: auth_svc
+      DB_PASSWORD: ${AUTH_DB_PASSWORD:?Define AUTH_DB_PASSWORD in .env}
+      JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET in .env}
+      PORT: 4003
+    ports:
+      - "127.0.0.1:4003:4003"
+    depends_on:
+      postgres:
+        condition: service_healthy
 volumes:
   postgres_data:
   mongo_data:
