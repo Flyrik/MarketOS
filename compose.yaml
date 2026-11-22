@@ -204,6 +204,38 @@ services: #nos services (conteneurs) à lancer
     depends_on:
       postgres:
         condition: service_healthy
+
+  kong:
+    image: kong:3.9.1
+    container_name: market-kong
+    restart: unless-stopped
+    environment:
+      JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET in .env}
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /tmp/kong.yml
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_STATUS_LISTEN: 0.0.0.0:8100 # /metrics pour Prometheus
+      KONG_ADMIN_LISTEN: "off"
+    # Kong ne lit pas les variables d'env dans kong.yml : on injecte JWT_SECRET au démarrage
+    command:
+      - sh
+      - -c
+      - 'sed "s#\$${JWT_SECRET}#$$JWT_SECRET#" /kong/kong.yml > /tmp/kong.yml && exec /docker-entrypoint.sh kong docker-start'
+    volumes:
+      - ./gateway/kong.yml:/kong/kong.yml:ro
+    ports:
+      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:8100:8100"
+    depends_on:
+      - auth
+      - orders
+      - inventory
+      - catalog
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 volumes:
   postgres_data:
   mongo_data:
