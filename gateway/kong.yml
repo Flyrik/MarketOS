@@ -1,0 +1,69 @@
+_format_version: "3.0"
+
+# ${JWT_SECRET} est remplacé au démarrage du conteneur (jamais de secret dans le dépôt)
+
+services:
+  - name: auth
+    url: http://auth:4003
+    routes:
+      - name: auth
+        paths: [/v1/auth]
+        strip_path: false
+    # pas de plugin jwt : c'est ici qu'on obtient le jeton
+
+  - name: orders
+    url: http://orders:4002
+    routes:
+      - name: orders
+        paths: [/v1/orders]
+        strip_path: false
+    plugins:
+      - name: jwt
+        config:
+          claims_to_verify: [exp] # sinon Kong accepte un jeton expiré
+
+  - name: inventory
+    url: http://inventory:4001
+    routes:
+      - name: inventory
+        paths: [/v1/stock, /v1/warehouses]
+        strip_path: false
+    plugins:
+      - name: jwt
+        config:
+          claims_to_verify: [exp]
+
+  - name: catalog
+    url: http://catalog:4000
+    routes:
+      - name: catalog
+        paths: [/graphql]
+        strip_path: false
+    plugins:
+      - name: jwt
+        config:
+          claims_to_verify: [exp]
+
+# Kong choisit le secret grâce au claim "iss" du jeton (iss = key ci-dessous)
+consumers:
+  - username: market-users
+    jwt_secrets:
+      - key: market-auth
+        algorithm: HS256
+        secret: ${JWT_SECRET}
+
+# plugins globaux : toutes les routes
+plugins:
+  - name: rate-limiting
+    config:
+      minute: 100
+      limit_by: ip
+      policy: local
+  - name: prometheus
+    config: #Permet de voir les métriques avec Prometheus dans /metrics (temps de réponse, nombre de requêtes, etc.) sur http://localhost:8100/metrics
+      status_code_metrics: true
+      latency_metrics: true
+  - name: cors
+    config: #Permet de faire des requêtes cross-origin depuis le front (http://localhost:5173)
+      origins: [http://localhost:5173]
+      headers: [Authorization, Content-Type] #accepte les headers Authorization et Content-Type
