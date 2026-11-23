@@ -60,3 +60,10 @@ plugins:
       limit_by: ip
       policy: local
   - name: prometheus
+    config: #Permet de voir les métriques avec Prometheus dans /metrics (temps de réponse, nombre de requêtes, etc.) sur http://localhost:8100/metrics
+      status_code_metrics: true
+      latency_metrics: true
+  - name: cors
+    config: #Permet de faire des requêtes cross-origin depuis le front (http://localhost:5173)
+      origins: [http://localhost:5173]
+      headers: [Authorization, Content-Type] #accepte les headers Authorization et Content-Type
