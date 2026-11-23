@@ -4,14 +4,14 @@ const bcrypt = require('bcryptjs')
 
 async function login(email, password) {
   const user = await repo.findByEmail(email)
-  // même erreur si l'email n'existe pas : on ne révèle pas quels comptes existent
+  // Il recup le sel dans le hach du mdp. Et ensuite il refait sel + password -> hach et compare avec le hash stocké dans la base de données. Si c'est le même, alors le mot de passe est correct.
   if (!user || !(await bcrypt.compare(password, user.password_hash))) {
     throw new Error('Invalid credentials')
   }
   const roles = await repo.getRoles(user.id)
   const token = jwt.sign(
-    { sub: user.id, roles: roles, issuer: 'market-auth' },
-    process.env.JWT_SECRET || 'secret',
+    { sub: user.id, roles: roles, iss: 'market-auth' },
+    process.env.JWT_SECRET ,
     { expiresIn: '15m' }
   )
   return token

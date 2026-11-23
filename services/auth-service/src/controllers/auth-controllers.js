@@ -10,9 +10,10 @@ async function login(req, res) {
   res.writeHead(200, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify({ token }))
   } catch (err) {
-    res.writeHead(400, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({ error: err.message }))
-  }
+  const status = err.message === 'Invalid credentials' ? 401 : 400
+  res.writeHead(status, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify({ error: err.message }))
+}
 }
 
 async function register(req, res) {
